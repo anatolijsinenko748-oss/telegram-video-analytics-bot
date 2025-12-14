@@ -25,6 +25,21 @@ DB_SCHEMA_PROMPT = """
   created_at TIMESTAMP WITH TIME ZONE NOT NULL
 )
 
+Таблица video_snapshots (почасовые замеры по ролику)
+Каждый снапшот содержит:
+· views_count, likes_count и т.д. — текущее значение на момент замера
+· delta_views_count, delta_likes_count и т.д. — прирост с предыдущего замера (может быть положительным, нулевым или отрицательным!)
+
+Примеры запросов про прирост:
+Запрос: "Сколько замеров с отрицательным приростом просмотров?"
+SQL: SELECT COUNT(*) FROM video_snapshots WHERE delta_views_count < 0;
+
+Запрос: "На сколько в сумме выросли просмотры 28 ноября 2025?"
+SQL: SELECT SUM(delta_views_count) FROM video_snapshots WHERE created_at::date = '2025-11-28';
+
+Запрос: "Сколько видео получали новые просмотры 27 ноября 2025?"
+SQL: SELECT COUNT(DISTINCT video_id) FROM video_snapshots WHERE created_at::date = '2025-11-27' AND delta_views_count > 0;
+
 Примеры:
 Запрос: "Сколько всего видео есть в системе?"
 SQL: SELECT COUNT(*) FROM videos;
@@ -47,4 +62,6 @@ SQL: SELECT COUNT(DISTINCT video_id) FROM video_snapshots WHERE created_at::date
 - Никогда не используй CREATE, INSERT, UPDATE, DELETE.
 - Если не уверен — верни SELECT 0
 - Если ID содержит буквы и цифры — оборачивай в 'кавычки'.
+- Для вопросов про прирост/убыль за час (отрицательный, положительный прирост) — используй поля delta_views_count, delta_likes_count и т.д.
+- Не вычисляй разницу между снапшотами вручную — используй готовые delta поля.
 """
