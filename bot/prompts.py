@@ -46,4 +46,5 @@ SQL: SELECT COUNT(DISTINCT video_id) FROM video_snapshots WHERE created_at::date
 - Запрос ДОЛЖЕН быть SELECT, возвращающий ровно одно число (COUNT, SUM, AVG и т.д.).
 - Никогда не используй CREATE, INSERT, UPDATE, DELETE.
 - Если не уверен — верни SELECT 0
+- Если ID содержит буквы и цифры — оборачивай в 'кавычки'.
 """

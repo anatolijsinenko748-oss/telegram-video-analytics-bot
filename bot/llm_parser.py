@@ -39,6 +39,10 @@ async def text_to_sql(user_query: str) -> str:
         if sql.endswith(";"):
             sql = sql[:-1].strip()
 
+        sql = sql.replace("<｜begin▁of▁sentence｜>", "").replace("<|begin_of_sentence|>", "")
+        sql = sql.replace("<｜end▁of▁sentence｜>", "").replace("<|end_of_sentence|>", "")
+        sql = sql.replace("<|eot_id|>", "").strip()
+
         if not sql.upper().startswith("SELECT"):
             return "SELECT 0"
 
