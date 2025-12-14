@@ -56,6 +56,9 @@ SQL: SELECT SUM(delta_views_count) FROM video_snapshots WHERE created_at::date =
 Запрос: "Сколько разных видео получали новые просмотры 27 ноября 2025?"
 SQL: SELECT COUNT(DISTINCT video_id) FROM video_snapshots WHERE created_at::date = '2025-11-27' AND delta_views_count > 0;
 
+Запрос: "На сколько просмотров выросли видео креатора id abc123 с 10:00 до 15:00 28 ноября 2025?"
+SQL: SELECT SUM(delta_views_count) FROM video_snapshots INNER JOIN videos ON video_snapshots.video_id = videos.id WHERE videos.creator_id = 'abc123' AND video_snapshots.created_at BETWEEN '2025-11-28 10:00:00' AND '2025-11-28 15:00:00';
+
 Правила:
 - Возвращай ТОЛЬКО чистый SQL-запрос без ```sql, без точки с запятой в конце, без объяснений.
 - Запрос ДОЛЖЕН быть SELECT, возвращающий ровно одно число (COUNT, SUM, AVG и т.д.).

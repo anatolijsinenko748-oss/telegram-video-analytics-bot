@@ -18,6 +18,7 @@ async def text_to_sql(user_query: str) -> str:
         ],
         "stream": False,
         "temperature": 0.0,
+        'seed' : 42,
         "max_tokens": 500
     }
 
