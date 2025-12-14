@@ -21,32 +21,38 @@ async def text_to_sql(user_query: str) -> str:
         "max_tokens": 500
     }
 
-    try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=60)
+    for attempt in range(3):
+        try:
+            response = requests.post(OLLAMA_URL, json=payload, timeout=60)
 
-        if response.status_code != 200:
-            return "SELECT 0"
+            if response.status_code != 200:
+                return "SELECT 0"
 
-        data = response.json()
+            data = response.json()
 
-        if "message" not in data or "content" not in data["message"]:
-            return "SELECT 0"
+            if "message" not in data or "content" not in data["message"]:
+                return "SELECT 0"
 
-        sql = data["message"]["content"].strip()
+            sql = data["message"]["content"].strip()
 
-        # Очистка
-        sql = sql.replace("```sql", "").replace("```", "").strip()
-        if sql.endswith(";"):
-            sql = sql[:-1].strip()
+            # Очистка
+            sql = sql.replace("```sql", "").replace("```", "").strip()
+            if sql.endswith(";"):
+                sql = sql[:-1].strip()
 
-        sql = sql.replace("<｜begin▁of▁sentence｜>", "").replace("<|begin_of_sentence|>", "")
-        sql = sql.replace("<｜end▁of▁sentence｜>", "").replace("<|end_of_sentence|>", "")
-        sql = sql.replace("<|eot_id|>", "").strip()
+            sql = sql.replace("<｜begin▁of▁sentence｜>", "").replace("<|begin_of_sentence|>", "")
+            sql = sql.replace("<｜end▁of▁sentence｜>", "").replace("<|end_of_sentence|>", "")
+            sql = sql.replace("<|eot_id|>", "").strip()
 
-        if not sql.upper().startswith("SELECT"):
-            return "SELECT 0"
+            if 'SELECT' in sql.upper() and len(sql) > 10:
+                return sql
 
-        return sql if sql else "SELECT 0"
+            if not sql.upper().startswith("SELECT"):
+                return "SELECT 0"
 
-    except Exception as e:
-        return "SELECT 0"
+            return sql if sql else "SELECT 0"
+
+        except:
+            pass
+
+    return 'SELECT 0'
